@@ -1,8 +1,10 @@
 import { JSONObject } from "../src/json-types";
-import { Permission, Restrict, Store } from "../src/store";
 import { UserStore } from "../src/userStore";
 import { AdminStore } from "./../src/adminStore";
 import { lazy } from "../src/lazy";
+import { Store } from "../src/store/store";
+import { Restrict } from "../src/decorators/restrict";
+import { Permission } from "../src/permissionModule/type";
 
 /*
 
@@ -323,7 +325,7 @@ describe("Test Store - Permission Inheritance", () => {
       @Restrict("r")
       public parentProp = lazy(() => new ChildStore());
     }
-    class ChildStore extends ParentStore { }
+    class ChildStore extends ParentStore {}
     const baseChildStore = new ChildStore();
     const nestedChildStore = baseChildStore.read(
       "parentProp:parentProp:parentProp"
