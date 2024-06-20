@@ -4,7 +4,7 @@ import { Permission } from "../permissionModule/type";
 import {
   isPermissionReadable,
   isPermissionWritable,
-} from "../permissionModule/util";
+} from "../permissionModule/checkPermissionUtil";
 import { IStore } from "./interface";
 import { StoreResult, StoreValue } from "./type";
 import { PermissionMetadataUtil } from "../permissionModule/metadataUtil";
@@ -19,10 +19,7 @@ export class Store implements IStore {
       key
     );
 
-    return (
-      isPermissionReadable(this.defaultPolicy) ||
-      isPermissionReadable(currentPermission)
-    );
+    return isPermissionReadable([this.defaultPolicy, currentPermission]);
   }
 
   allowedToWrite(key: string): boolean {
@@ -30,10 +27,7 @@ export class Store implements IStore {
       this,
       key
     );
-    return (
-      isPermissionWritable(this.defaultPolicy) ||
-      isPermissionWritable(currentPermission)
-    );
+    return isPermissionWritable([this.defaultPolicy, currentPermission]);
   }
 
   read(path: string): StoreResult {
@@ -41,7 +35,7 @@ export class Store implements IStore {
       this,
       path
     );
-    if (isPermissionReadable(currentPermission)) {
+    if (isPermissionReadable([this.defaultPolicy, currentPermission])) {
       return this[path];
     } else {
       throw new Error("Permission denied");
@@ -53,7 +47,7 @@ export class Store implements IStore {
       this,
       path
     );
-    if (isPermissionReadable(currentPermission)) {
+    if (isPermissionReadable([this.defaultPolicy, currentPermission])) {
       this[path] = value;
       return this[path];
     } else {
